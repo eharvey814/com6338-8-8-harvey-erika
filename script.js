@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         recipes.forEach((recipe) => {
-            const { id, title, image, sourceUrl } = recipe;
+            const { id, title, image, sourceUrl } = recipe; 
 
             // Create card
             const card = document.createElement("div");
