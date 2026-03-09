@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
         saveFavorites();
         displayRecipes(favorites, favoritesDiv);
     };
-
+    
     // Display recipes
     const displayRecipes = (recipes, container) => {
         container.innerHTML = "";
