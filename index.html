@@ -3,34 +3,50 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Recipe Finder</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="A simple recipe finder app that allows users to search for recipes and save their
+    favorites.">
+
+    <title>Recipe Finder</title>
+
+    <link rel="preconnect"  href="https://img.spoonacular.com">
+
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <header>
-        <h1>Recipe Finder</h1>
-        <p>Search for recipes and save your favorites</p>
+    <header class="hero">
+        <img src="images/pizza3.webp" alt="Delicious food on a kitchen table" class="hero-img" fetchpriority="high">
+        <div class="hero-overlay">
+            <div class="hero-text">
+                <h1>Recipe Finder</h1>
+                <p>Find delicious recipes for your family and save your favorites.</p>
+
+                <div class="search-section">
+                    <input type="text" id="searchInput" placeholder="Search recipes (ex: chicken, pasta)">
+                    <button id="searchBtn">Search</button>
+                </div>
+            </div>
+        </div>
     </header>
 
     <main>
-        <section class="search-section">
-            <input type="text" id="searchInput" placeholder="Search for a recipe...">
-            <button id="searchBtn">Search</button>
-        </section>
 
         <section>
-            <h2>Results</h2>
+            <h2>Recipe Results</h2>
             <div id="results" class="grid"></div>
         </section>
 
         <section>
-            <h2>Favorites</h2>
+            <h2>Your Favorites</h2>
             <div id="favorites" class="grid"></div>
         </section>
+
     </main>
 
     <script src="script.js"></script>
 </body>
+
 </html>

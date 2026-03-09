@@ -1,33 +1,24 @@
 document.addEventListener("DOMContentLoaded", function () {
-
-    // ============================
     // API key
-    // ============================
-    var API_KEY = "1022b269dd6b49239442bd26a06c25f4";
+    const API_KEY = "1022b269dd6b49239442bd26a06c25f4";
 
-    // ============================
     // DOM elements
-    // ============================
-    var searchBtn = document.getElementById("searchBtn");
-    var searchInput = document.getElementById("searchInput");
-    var resultsDiv = document.getElementById("results");
-    var favoritesDiv = document.getElementById("favorites");
+    const searchBtn = document.getElementById("searchBtn");
+    const searchInput = document.getElementById("searchInput");
+    const resultsDiv = document.getElementById("results");
+    const favoritesDiv = document.getElementById("favorites");
 
-    // ============================
     // Local storage
-    // ============================
-    var favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
-    // ============================
     // Fetch recipes
-    // ============================
-    var fetchRecipes = async (query) => {
+    const fetchRecipes = async (query) => {
         try {
-            var response = await fetch(
+            const response = await fetch(
                 `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=12&addRecipeInformation=true&apiKey=${API_KEY}`
             );
 
-            var data = await response.json();
+            const data = await response.json();
 
             return data.results || [];
 
@@ -37,10 +28,27 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    // ============================
+        // Favorites functions
+    const saveFavorites = () => {
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+    };
+
+    const addToFavorites = (recipe) => {
+        if (!favorites.find((fav) => fav.id === recipe.id)) {
+            favorites.push(recipe);
+            saveFavorites();
+            displayRecipes(favorites, favoritesDiv);
+        }
+    };
+
+    const removeFromFavorites = (id) => {
+        favorites = favorites.filter((fav) => fav.id !== id);
+        saveFavorites();
+        displayRecipes(favorites, favoritesDiv);
+    };
+    
     // Display recipes
-    // ============================
-    var displayRecipes = (recipes, container) => {
+    const displayRecipes = (recipes, container) => {
         container.innerHTML = "";
 
         if (!recipes || recipes.length === 0) {
@@ -49,20 +57,26 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         recipes.forEach((recipe) => {
-            var { id, title, image } = recipe;
+            const { id, title, image, sourceUrl } = recipe; 
 
-            var card = document.createElement("div");
+            // Create card
+            const card = document.createElement("div");
             card.classList.add("card");
 
+            // Card content
             card.innerHTML = `
+            <a href="${sourceUrl}" target="_blank" class="recipe-link">
                 <img src="${image}" alt="${title}">
                 <h3>${title}</h3>
-                <button>
-                    ${container.id === "results" ? "Add to Favorites" : "Remove Favorite"}
-                </button>           
+            </a>
+            <button class="${container.id === "results" ? "add-favorite" : "remove-favorite"}">
+            ${container.id === "results" ? "Add to Favorites" : "Remove Favorite"}
+            </button>
             `;
 
-            card.querySelector("button").addEventListener("click", () => {
+            // Button functionality
+            card.querySelector("button").addEventListener("click", (e) => {
+                e.stopPropagation(); // prevent link click when pressing button
                 container.id === "results"
                     ? addToFavorites(recipe)
                     : removeFromFavorites(id);
@@ -72,44 +86,25 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     };
 
-    // ============================
-    // Favorites functions
-    // ============================
-    var saveFavorites = () => {
-        localStorage.setItem("favorites", JSON.stringify(favorites));
-    };
-
-    var addToFavorites = (recipe) => {
-        if (!favorites.find((fav) => fav.id === recipe.id)) {
-            favorites.push(recipe);
-            saveFavorites();
-            displayRecipes(favorites, favoritesDiv);
-        }
-    };
-
-    var removeFromFavorites = (id) => {
-        favorites = favorites.filter((fav) => fav.id !== id);
-        saveFavorites();
-        displayRecipes(favorites, favoritesDiv);
-    };
-
-    // ============================
     // Search button event
-    // ============================
     searchBtn.addEventListener("click", async () => {
-        var query = searchInput.value.trim();
+        const query = searchInput.value.trim();
         if (!query) return;
 
         // Show loader while fetching
         resultsDiv.innerHTML = '<div class="loader"></div>';
-
-        var recipes = await fetchRecipes(query);
+        const recipes = await fetchRecipes(query);
         displayRecipes(recipes, resultsDiv);
     });
 
-    // ============================
+    // Allow pressing Enter to search
+    searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            searchBtn.click();
+        }
+    });
+
     // Load favorites on page load
-    // ============================
     displayRecipes(favorites, favoritesDiv);
 
 });
