@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-        // Favorites functions
+    // Favorites functions
     const saveFavorites = () => {
         localStorage.setItem("favorites", JSON.stringify(favorites));
     };
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
         saveFavorites();
         displayRecipes(favorites, favoritesDiv);
     };
-    
+
     // Display recipes
     const displayRecipes = (recipes, container) => {
         container.innerHTML = "";
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         recipes.forEach((recipe) => {
-            const { id, title, image, sourceUrl } = recipe; 
+            const { id, title, image, sourceUrl } = recipe;
 
             // Create card
             const card = document.createElement("div");
