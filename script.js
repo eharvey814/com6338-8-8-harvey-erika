@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
         loadmoreBtn.style.display = recipes.length > 0 ? "block" : "none";
     });
 
+    // Load more button event
     loadmoreBtn.addEventListener("click", async () => {
         const query = searchInput.value.trim();
         offset += resultsPerPage;

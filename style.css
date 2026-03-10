@@ -149,7 +149,7 @@ h2 {
 }
 
 .card a {
-   flex-grow: 0;
+    flex-grow: 0;
 }
 
 .card:hover {
