@@ -7,19 +7,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");
     const resultsDiv = document.getElementById("results");
     const favoritesDiv = document.getElementById("favorites");
+    const loadmoreBtn = document.getElementById("loadmoreBtn");
 
     // Local storage
     let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
-    // Fetch recipes
-    const fetchRecipes = async (query) => {
+    let offset = 0; // for pagination (if needed in future)
+    const resultsPerPage = 12; // number of recipes to show per search
+
+    //Fetch recipes from API
+    const fetchRecipes = async (query, offset = 0) => {
         try {
             const response = await fetch(
-                `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=12&addRecipeInformation=true&apiKey=${API_KEY}`
+                `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=${resultsPerPage}&offset=${offset}&addRecipeInformation=true&apiKey=${API_KEY}`
             );
 
             const data = await response.json();
-
             return data.results || [];
 
         } catch (error) {
@@ -46,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         saveFavorites();
         displayRecipes(favorites, favoritesDiv);
     };
-    
+
     // Display recipes
     const displayRecipes = (recipes, container) => {
         container.innerHTML = "";
@@ -57,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         recipes.forEach((recipe) => {
-            const { id, title, image, sourceUrl } = recipe; 
+            const { id, title, image, sourceUrl } = recipe;
 
             // Create card
             const card = document.createElement("div");
@@ -91,10 +94,48 @@ document.addEventListener("DOMContentLoaded", function () {
         const query = searchInput.value.trim();
         if (!query) return;
 
-        // Show loader while fetching
+        offset = 0; // reset pagination
         resultsDiv.innerHTML = '<div class="loader"></div>';
-        const recipes = await fetchRecipes(query);
+
+        const recipes = await fetchRecipes(query, offset);
         displayRecipes(recipes, resultsDiv);
+
+        // Show button only if results exist
+        loadmoreBtn.style.display = recipes.length > 0 ? "block" : "none";
+    });
+
+    loadmoreBtn.addEventListener("click", async () => {
+        const query = searchInput.value.trim();
+        offset += resultsPerPage;
+
+        const moreRecipes = await fetchRecipes(query, offset);
+
+        moreRecipes.forEach((recipe) => {
+            const { id, title, image, sourceUrl } = recipe;
+
+            const card = document.createElement("div");
+            card.classList.add("card");
+
+            card.innerHTML = `
+            <a href="${sourceUrl}" target="_blank" class="recipe-link">
+                <img src="${image}" alt="${title}">
+                <h3>${title}</h3>
+            </a>
+            <button class="add-favorite">Add to Favorites</button>
+        `;
+
+            card.querySelector("button").addEventListener("click", (e) => {
+                e.stopPropagation();
+                addToFavorites(recipe);
+            });
+
+            resultsDiv.appendChild(card);
+        });
+
+        // Hide button if no more results
+        if (moreRecipes.length < resultsPerPage) {
+            loadmoreBtn.style.display = "none";
+        }
     });
 
     // Allow pressing Enter to search

@@ -242,6 +242,24 @@ h2 {
     transform: translateY(-2px);
 }
 
+#loadmoreBtn {
+    padding: 10px 15px;
+    border-radius: 30px;
+    border: none;
+    background: lightgrey;
+    color: black;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: block;
+    margin: 20px auto;
+}
+
+#loadmoreBtn:hover {
+    background: #e85c2a;
+    transform: translateY(-2px);
+}
+
 .site-footer {
     width: 100vw;
     text-align: center;
